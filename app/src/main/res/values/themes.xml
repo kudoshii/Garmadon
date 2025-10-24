@@ -1,8 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.MarketPlaces" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.Garmadon" parent="Theme.Material3.DayNight.NoActionBar">
 
     </style>
 
-    <style name="Theme.MarketPlaces" parent="Base.Theme.Garmadon" />
+    <style name="Theme.Garmadon" parent="Base.Theme.Garmadon" />
 </resources>
