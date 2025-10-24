@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_home"
+        android:icon="@drawable/ic_home"
+        android:title="Inicio" />
+
+    <item
+        android:id="@+id/navigation_chats"
+        android:icon="@drawable/ic_chat"
+        android:title="Chats" />
+
+    <item
+        android:id="@+id/navigation_placeholder"
+        android:title="Vender"
+        android:enabled="true"/>
+
+    <item
+        android:id="@+id/navigation_ads"
+        android:icon="@drawable/ic_favorite_border"
+        android:title="Anuncios" />
+
+    <item
+        android:id="@+id/navigation_account"
+        android:icon="@drawable/ic_person"
+        android:title="Cuenta" />
+
+</menu>

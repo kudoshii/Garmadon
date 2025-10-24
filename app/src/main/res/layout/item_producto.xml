@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="4dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="8dp">
+
+        <!-- Imagen del Producto -->
+        <ImageView
+            android:id="@+id/iv_producto_imagen"
+            android:layout_width="0dp"
+            android:layout_height="200dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bicicleta"
+            android:contentDescription="Imagen del producto en venta"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Título del Producto -->
+        <TextView
+            android:id="@+id/tv_producto_titulo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:text="Nombre del Producto Atractivo"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:maxLines="1"
+            android:ellipsize="end"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/iv_producto_imagen" />
+
+        <!-- Precio del Producto -->
+        <TextView
+            android:id="@+id/tv_producto_precio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="$ 99.990"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="?attr/colorAccent"
+            app:layout_constraintStart_toStartOf="@+id/tv_producto_titulo"
+            app:layout_constraintTop_toBottomOf="@+id/tv_producto_titulo" />
+
+        <!-- Vendedor -->
+        <TextView
+            android:id="@+id/tv_producto_vendedor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="Vendido por: [Usuario]"
+            android:textSize="12sp"
+            android:textColor="@android:color/darker_gray"
+
+            app:layout_constraintBaseline_toBaselineOf="@+id/tv_producto_precio"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>
