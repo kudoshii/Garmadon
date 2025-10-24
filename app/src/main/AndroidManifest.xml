@@ -26,12 +26,7 @@
         <activity
             android:name="com.example.garmadon.ItemProductoActivity"
             android:exported="false" />
-        <activity
-            android:name=".HomeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".RegistroActivity"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
