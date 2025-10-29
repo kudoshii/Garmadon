@@ -78,7 +78,7 @@ public class DetalleProductoActivity extends AppCompatActivity {
         tvNombreDetalle.setText("Bicicleta Eléctrica Turbo X" + id.substring(0, 2));
         tvPrecioDetalle.setText("$450.000 CLP");
         tvDescripcionDetalle.setText("Modelo 2024, casi nueva. Perfecta para la ciudad y subir cuestas sin esfuerzo. Incluye cargador y garantía.");
-                tvVendedorDetalle.setText("Usuario: DiegoDev");
+                tvVendedorDetalle.setText("Usuario: Kudoshii");
     }
 
     private void realizarLlamada() {

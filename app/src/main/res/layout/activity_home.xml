@@ -7,8 +7,8 @@
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
 
-    <!-- 1. Barra superior -->
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
@@ -19,21 +19,51 @@
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="MarketPlace - Productos" />
+            app:title="MarketPlace - Productos"
+            />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_search_fixed"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="4dp"
+            android:background="@android:color/white"
+            >
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/search_view_productos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:queryHint="Buscar..."
+                app:iconifiedByDefault="false"
+                app:searchIcon="@drawable/ic_search"
+                app:closeIcon="@drawable/ic_close"
+                android:paddingVertical="4dp"
+                android:background="@android:color/white"
+                android:theme="@style/ThemeOverlay.AppCompat.Light"
+                />
+
+        </androidx.cardview.widget.CardView>
+
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- 2. Lista de productos -->
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_productos"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="8dp"
         android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
         android:layout_marginBottom="88dp"
+
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+
         tools:listitem="@layout/item_producto" />
 
-    <!-- 3. Menú inferior -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
@@ -44,7 +74,6 @@
         app:labelVisibilityMode="labeled"
         app:elevation="8dp" />
 
-    <!-- 4. Botón flotante FAB -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_publicar"
         android:layout_width="wrap_content"
