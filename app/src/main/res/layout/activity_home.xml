@@ -6,13 +6,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".HomeActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar_home"
             android:layout_width="match_parent"
@@ -21,7 +19,6 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="MarketPlace - Productos"
             />
-
         <androidx.cardview.widget.CardView
             android:id="@+id/card_search_fixed"
             android:layout_width="match_parent"
@@ -33,7 +30,6 @@
             app:cardElevation="4dp"
             android:background="@android:color/white"
             >
-
             <androidx.appcompat.widget.SearchView
                 android:id="@+id/search_view_productos"
                 android:layout_width="match_parent"
@@ -46,12 +42,8 @@
                 android:background="@android:color/white"
                 android:theme="@style/ThemeOverlay.AppCompat.Light"
                 />
-
         </androidx.cardview.widget.CardView>
-
     </com.google.android.material.appbar.AppBarLayout>
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_productos"
         android:layout_width="match_parent"
@@ -59,11 +51,8 @@
         android:padding="8dp"
         android:clipToPadding="false"
         android:layout_marginBottom="88dp"
-
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-
         tools:listitem="@layout/item_producto" />
-
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="match_parent"
@@ -73,7 +62,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
         app:elevation="8dp" />
-
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_publicar"
         android:layout_width="wrap_content"
@@ -85,7 +73,5 @@
         app:backgroundTint="?attr/colorAccent"
         app:tint="@android:color/white"
         app:elevation="12dp"
-
         android:contentDescription="Publicar un nuevo producto" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -12,21 +12,23 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garmadon">
         <activity
-            android:name="com.example.garmadon.RegistroActivity"
+            android:name=".CuentaActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.garmadon.HomeActivity"
+            android:name=".RegistroActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.garmadon.DetalleProductoActivity"
+            android:name=".HomeActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.garmadon.PublicarActivity"
+            android:name=".DetalleProductoActivity"
             android:exported="false" />
         <activity
-            android:name="com.example.garmadon.ItemProductoActivity"
+            android:name=".PublicarActivity"
             android:exported="false" />
-
+        <activity
+            android:name=".ItemProductoActivity"
+            android:exported="false" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

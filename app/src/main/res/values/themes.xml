@@ -1,8 +1,26 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.Garmadon" parent="Theme.Material3.DayNight.NoActionBar">
+<resources xmlns:tools="http://schemas.android.com/tools"> <!-- Base application theme. --> <style name="Base.Theme.MarketPlaces" parent="Theme.Material3.DayNight.NoActionBar"> </style>
 
+    <style name="Theme.MarketPlaces" parent="Base.Theme.MarketPlaces" />
+    <!-- Estilo para las etiquetas (Nombres, Email, etc.) -->
+    <style name="PerfilLabel"> <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">0.3</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+    <!-- Estilo para los valores (Prueba Prueba, Prueba@gmail.com, etc.) -->
+    <style name="PerfilValor">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_columnWeight">0.7</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:gravity">end</item>
+<!-- CORRECCIÓN: Usamos paddingTop y paddingBottom en lugar de paddingVertical para compatibilidad con API < 26 -->
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
     </style>
 
-    <style name="Theme.Garmadon" parent="Base.Theme.Garmadon" />
-</resources>
+    </resources>
