@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools"> <!-- Base application theme. --> <style name="Base.Theme.MarketPlaces" parent="Theme.Material3.DayNight.NoActionBar"> </style>
 
-    <style name="Theme.MarketPlaces" parent="Base.Theme.MarketPlaces" />
+    <style name="Theme.Garmadon" parent="Base.Theme.MarketPlaces" />
     <!-- Estilo para las etiquetas (Nombres, Email, etc.) -->
     <style name="PerfilLabel"> <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
