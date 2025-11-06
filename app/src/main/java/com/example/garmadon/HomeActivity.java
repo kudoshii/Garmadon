@@ -21,6 +21,7 @@ import com.example.garmadon.R;
 
 // SE ELIMINA 'implements SearchView.OnQueryTextListener'
 // La implementación se hace de forma anónima en el método configurarBuscador() (SEMANA5)
+
 public class HomeActivity extends AppCompatActivity {
     // Vistas principales
     private RecyclerView recyclerView;
@@ -43,13 +44,38 @@ public class HomeActivity extends AppCompatActivity {
         searchViewProductos = findViewById(R.id.search_view_productos);
         // --- SEMANA 4: Inicialización del Bottom Nav (con Toast)
         bottomNav = findViewById(R.id.bottom_navigation_view);
+        // SEMANA 6: Aseguramos que el ítem 'Inicio' esté seleccionado por defecto
+        MenuItem homeItem = bottomNav.getMenu().findItem(R.id.navigation_home);
+        if (homeItem != null) {
+            homeItem.setChecked(true);
+        }
         bottomNav.setLabelVisibilityMode(NavigationBarView.LABEL_VISIBILITY_LABELED);
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
-            // SEMANA 5.1: Manejar la navegación a la pantalla de Cuenta
-            if (itemId == R.id.navigation_account) {
-                Intent intent = new Intent(HomeActivity.this, CuentaActivity.class);
+            Intent intent;
+            // SEMANA 6.1: Manejar la navegación a la pantalla de Chats
+            if (itemId == R.id.navigation_chats) {
+                // Al presionar el botón de Chat, navegamos a ChatActivity
+                Toast.makeText(HomeActivity.this, "Abriendo Chats (Semana 6.1)",
+                        Toast.LENGTH_SHORT).show();
+                intent = new Intent(HomeActivity.this, ChatActivity.class);
                 startActivity(intent);
+                return true;
+            }
+            // SEMANA 5.1: Manejar la navegación a la pantalla de Cuenta
+            else if (itemId == R.id.navigation_account) {
+                intent = new Intent(HomeActivity.this, CuentaActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            // SEMANA 6: Manejar la navegación a la pantalla de Anuncios
+            else if (itemId == R.id.navigation_ads) {
+                intent = new Intent(HomeActivity.this, AnunciosActivity.class);
+                startActivity(intent);
+                return true;
+            }
+            // SEMANA 6: Si presionamos Home, no hacemos nada (ya estamos aquí)
+            else if (itemId == R.id.navigation_home) {
                 return true;
             }
             // Revertido a la lógica de Toast temporal (para otros ítems)
@@ -57,7 +83,7 @@ public class HomeActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT).show();
             return true;
         });
-        // --- FIN SEMANA 4 ---
+        // --- FIN SEMANA 6.1 (SE INCLUYÓ EN EL LISTENER EXISTENTE) ---
         // 2. Configuración CLAVE del RecyclerView
         configurarRecyclerView();
         // SEMANA 5: Configuración del Listener del Buscador para escuchar los cambios de texto
