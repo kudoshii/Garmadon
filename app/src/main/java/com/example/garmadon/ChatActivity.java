@@ -52,7 +52,7 @@ public class ChatActivity extends AppCompatActivity {
     }
     private void configurarCabecera() {
         // Datos de contacto simulados
-        tvNombreContacto.setText("DiegoDev");
+        tvNombreContacto.setText("Garmadon_id");
         tvEstadoContacto.setText("online");
         // Listener para el botón de retroceso (flecha <- )
         ImageButton btnBack = findViewById(R.id.btnBack);
@@ -107,7 +107,7 @@ public class ChatActivity extends AppCompatActivity {
         String respuestaTexto = "¡Hola! Gracias por tu mensaje. El producto sigue disponible.";
         Mensaje respuesta = new Mensaje(
                 "ID_RESPUESTA_" + (listaMensajes.size() + 1),
-                "DiegoDev_id", // ID del remitente (el otro usuario)
+                "Garmadon_id", // ID del remitente (el otro usuario)
                 respuestaTexto,
                 System.currentTimeMillis() + 1000 // Hora ligeramente posterior
         );
@@ -122,11 +122,11 @@ public class ChatActivity extends AppCompatActivity {
     private List<Mensaje> cargarMensajesDePrueba() {
         List<Mensaje> mensajes = new ArrayList<>();
         // Mensaje del OTRO usuario (izquierda)
-        mensajes.add(new Mensaje("m1", "DiegoDev_id", "¡Hola! ¿Aún tienes la bicicleta a la venta?", System.currentTimeMillis() - 600000));
+        mensajes.add(new Mensaje("m1", "Garmadon_id", "¡Hola! ¿Aún tienes la bicicleta a la venta?", System.currentTimeMillis() - 600000));
                 // Mensaje del USUARIO PROPIO (derecha)
                 mensajes.add(new Mensaje("m2", CURRENT_USER_ID, "Sí, claro. Está en excelente estado.", System.currentTimeMillis() - 300000));
                         // Mensaje del OTRO usuario (izquierda)
-                        mensajes.add(new Mensaje("m3", "DiegoDev_id", "¿Podrías enviarme más fotos de los detalles? ¿Y dónde podría recogerla?", System.currentTimeMillis() - 120000));
+                        mensajes.add(new Mensaje("m3", "Garmadon_id", "¿Podrías enviarme más fotos de los detalles? ¿Y dónde podría recogerla?", System.currentTimeMillis() - 120000));
         return mensajes;
     }
 }
