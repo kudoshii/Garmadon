@@ -13,6 +13,7 @@ import com.example.garmadon.adapter.ProductoAdapter;
 import com.example.garmadon.model.Producto;
 import java.util.ArrayList;
 import java.util.List;
+
 public class AnunciosActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private BottomNavigationView bottomNav;
