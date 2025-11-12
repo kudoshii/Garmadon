@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    tools:context=".EditarPerfilActivity">
+
+    <!-- AppBar (Barra Superior) con Botón de Retroceso -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_editar_perfil"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:title="Editar perfil"
+            app:titleTextColor="@android:color/white"
+            app:navigationIcon="@drawable/ic_arrow_back_white" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <!-- Contenido Principal -->
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
+
+            <!-- 1. Círculo de Imagen de Perfil -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/card_perfil_editar"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="50dp"
+                app:cardElevation="0dp"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <ImageView
+                    android:id="@+id/img_perfil_editar"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:contentDescription="Foto de perfil actual"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_foreground" />
+            </androidx.cardview.widget.CardView>
+
+            <!-- Botón Flotante para cambiar imagen -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab_cambiar_imagen"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_camera_alt"
+                app:fabSize="mini"
+                app:tint="@android:color/white"
+                android:contentDescription="Cambiar foto de perfil"
+                app:layout_constraintEnd_toEndOf="@id/card_perfil_editar"
+                app:layout_constraintBottom_toBottomOf="@id/card_perfil_editar"
+                android:layout_marginEnd="-8dp"
+                android:layout_marginBottom="-8dp" />
+
+            <!-- 2. Campo Nombres Completos -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_nombres"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:hint="Nombres completos"
+                app:layout_constraintTop_toBottomOf="@id/card_perfil_editar">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_nombres"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName|textCapWords"
+                    tools:text="DiegoDev" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 3. Campo Fecha de Nacimiento -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_fecha_nac"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="8dp"
+                android:hint="Fecha de nac."
+                app:startIconDrawable="@drawable/ic_calendar_month"
+                app:layout_constraintTop_toBottomOf="@id/til_nombres"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/til_telefono">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_fecha_nac"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:inputType="none"
+                    tools:text="13/11/1999" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 4. Campo Teléfono (Simulación simple sin librería de país) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_telefono"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:hint="Teléfono"
+                app:layout_constraintTop_toBottomOf="@id/til_nombres"
+                app:layout_constraintStart_toEndOf="@id/til_fecha_nac"
+                app:layout_constraintEnd_toEndOf="parent">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_telefono"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone"
+                    tools:text="982254141" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- 5. Botón de Actualizar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_actualizar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="48dp"
+                android:paddingStart="48dp"
+                android:paddingEnd="48dp"
+                android:text="ACTUALIZAR"
+                android:textSize="16sp"
+                app:icon="@drawable/ic_edit"
+                app:iconGravity="textStart"
+                app:layout_constraintTop_toBottomOf="@id/til_fecha_nac"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

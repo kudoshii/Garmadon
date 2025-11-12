@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garmadon">
         <activity
+            android:name=".CambiarPasswordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".EditarPerfilActivity"
+            android:exported="false" />
+        <activity
             android:name=".ChatActivity"
             android:exported="false" />
         <activity
