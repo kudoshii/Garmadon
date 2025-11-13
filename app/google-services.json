@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "285916965348",
+    "project_id": "app-marketplace-garmadon",
+    "storage_bucket": "app-marketplace-garmadon.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:285916965348:android:50acff4bc5c75b8f56fff1",
+        "android_client_info": {
+          "package_name": "com.example.garmadon"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCASJNli_w2ZNTp32SbHHDbVVpKo5wt9ZM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
