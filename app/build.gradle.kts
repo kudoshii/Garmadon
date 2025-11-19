@@ -58,6 +58,9 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:5.0.5")
     annotationProcessor("com.github.bumptech.glide:compiler:5.0.5")
 
+    // Números telefonicos
+    implementation("com.hbb20:ccp:2.7.0")
+
     // Pruebas
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
