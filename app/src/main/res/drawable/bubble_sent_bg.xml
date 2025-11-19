@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Esquinas redondeadas para darle el aspecto de burbuja -->
+    <corners android:radius="16dp" />
+
+    <!-- Color de fondo de la burbuja.
+         Recomiendo usar un color primario, como este azul fuerte,
+         para diferenciar claramente de los mensajes recibidos. -->
+    <solid android:color="#2196F3" />
+
+    <!-- Opcional: Puedes agregar padding si el TextView no tiene suficiente.
+    <padding android:left="12dp" android:top="8dp" android:right="12dp" android:bottom="8dp" />
+    -->
+</shape>

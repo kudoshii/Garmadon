@@ -1,0 +1,13 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- Define la forma como un círculo (oval) -->
+
+    <solid android:color="#2196F3"/>
+    <!-- Color azul primario (Material Design Blue 500) para indicar un estado activo. -->
+
+    <size
+        android:width="48dp"
+        android:height="48dp"/>
+    <!-- Define el tamaño del círculo -->
+
+</shape>

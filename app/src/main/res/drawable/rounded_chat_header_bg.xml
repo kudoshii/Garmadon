@@ -1,0 +1,12 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <!-- El elemento 'oval' define la forma como un círculo (si el ancho y alto son iguales) -->
+
+    <solid android:color="#4CAF50"/>
+    <!-- El código de color "#4CAF50" es un verde brillante, común en Android/Material Design -->
+
+    <size
+        android:width="40dp"
+        android:height="40dp"/>
+    <!-- Define el tamaño del círculo para que se ajuste bien al ícono de perfil (24dp) -->
+</shape>

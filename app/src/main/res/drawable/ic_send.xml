@@ -1,0 +1,11 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#FFFFFF">
+    <!-- Path data para el ícono de avión de papel o enviar. El color de relleno es blanco para contrastar con el botón azul. -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M2.01,21L23,12L2.01,3L2,10L17,12L2,14L2.01,21Z"/>
+</vector>
