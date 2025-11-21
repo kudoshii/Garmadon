@@ -242,13 +242,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                         });
                     }
-                } else if (itemId == 2) { // Galeria
+                } else if (itemId == 2) { // Galería
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        // API 33+ (no se necesita permiso para GetContent)
-                        imagenGaleria();
+                        // CORRECCIÓN: API 33+ necesita READ_MEDIA_IMAGES
+                        concederPermisoAlmacenamiento.launch(Manifest.permission.READ_MEDIA_IMAGES);
                     } else {
-                        // API < 33 (se necesita permiso de almacenamiento para la galería)
-
+                        // API < 33 necesita WRITE_EXTERNAL_STORAGE
                         concederPermisoAlmacenamiento.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     }
                 }
@@ -269,8 +268,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(this,
                 (view, year, monthOfYear, dayOfMonth) -> {
-                    String fechaSeleccionada = String.format("%02d/%02d/%d", dayOfMonth,
-                            (monthOfYear + 1), year);
+                    String fechaSeleccionada = String.format("%02d/%02d/%d", dayOfMonth, (monthOfYear + 1), year);
                     etFechaNac.setText(fechaSeleccionada);
                 }, anio, mes, dia);
         datePickerDialog.show();

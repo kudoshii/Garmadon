@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "285916965348",
+    "firebase_url": "https://app-marketplace-garmadon-default-rtdb.firebaseio.com",
     "project_id": "app-marketplace-garmadon",
     "storage_bucket": "app-marketplace-garmadon.firebasestorage.app"
   },
@@ -12,7 +13,12 @@
           "package_name": "com.example.garmadon"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "285916965348-d6bol4buf6cje5u7tmg3gka4rre5faoo.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyCASJNli_w2ZNTp32SbHHDbVVpKo5wt9ZM"
@@ -20,7 +26,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "285916965348-d6bol4buf6cje5u7tmg3gka4rre5faoo.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }

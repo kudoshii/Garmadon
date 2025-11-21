@@ -238,17 +238,23 @@ public class CuentaActivity extends AppCompatActivity {
         finish();
     }
     private String obtenerFecha(String timestampString) {
-        if (timestampString == null || timestampString.isEmpty() || timestampString.equals("null"))
-        {
+        // Validación: Si el timestamp es nulo, vacío o dice "null"
+        if (timestampString == null || timestampString.isEmpty() || timestampString.equals("null")) {
+            return "N/A";
         }
-        return "N/A";
-    }
-    try {
-        long timestamp = Long.parseLong(timestampString);
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        return sdf.format(new Date(timestamp));
-    } catch (NumberFormatException e) {
-        Log.e("FECHA_FORMAT", "Error al parsear timestamp: " + timestampString, e);
-        return "N/A";
+
+        try {
+            // Parsear el timestamp a long (milisegundos desde 1970)
+            long timestamp = Long.parseLong(timestampString);
+
+            // Formatear como fecha legible (día/mes/año)
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+            return sdf.format(new Date(timestamp));
+
+        } catch (NumberFormatException e) {
+            // Si falla el parseo, registrar el error y devolver "N/A"
+            Log.e("FECHA_FORMAT", "Error al parsear timestamp: " + timestampString, e);
+            return "N/A";
+        }
     }
 }
