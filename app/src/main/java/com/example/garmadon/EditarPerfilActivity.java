@@ -272,6 +272,20 @@ public class EditarPerfilActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    /*private void mostrarDatePickerDialog() {
+        final Calendar c = Calendar.getInstance();
+        int anio = c.get(Calendar.YEAR);
+        int mes = c.get(Calendar.MONTH);
+        int dia = c.get(Calendar.DAY_OF_MONTH);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(this,
+                (view, year, monthOfYear, dayOfMonth) -> {
+                    String fechaSeleccionada = String.format("%02d/%02d/%d", dayOfMonth, (monthOfYear + 1), year);
+                    etFechaNac.setText(fechaSeleccionada);
+                }, anio, mes, dia);
+        datePickerDialog.show();
+    }*/
+
     private void guardarCambios() {
         // Lógica de validación y actualización en Firebase (se mantiene)
         String nombres = etNombres.getText().toString().trim();
