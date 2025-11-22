@@ -4,29 +4,22 @@
 
     <!-- ========== PERMISOS OBLIGATORIOS ========== -->
 
-    <!-- Internet (OBLIGATORIO para Firebase) -->
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-
-    <!-- Cámara -->
-    <uses-permission android:name="android.permission.CAMERA"/>
     <uses-feature
         android:name="android.hardware.camera"
-        android:required="false"/>
+        android:required="false" />
 
-    <!-- Almacenamiento para Android 13+ (API 33+) -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
 
-    <!-- Almacenamiento para Android 12 y anteriores (API 32 y menor) -->
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32"/>
 
-    <!-- Escritura solo para Android 9 y anteriores (API 28 y menor) -->
+    <!-- Android 12 y menores -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
+    <!-- Solo hasta Android 9 -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28"
-        tools:ignore="ScopedStorage"/>
+        android:maxSdkVersion="28" />
 
     <application
         android:allowBackup="true"

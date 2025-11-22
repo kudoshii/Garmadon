@@ -127,8 +127,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         if (imageUri != null) {
                             subirImagenStorage(imageUri);
                         } else {
-                            Toast.makeText(this, "Error: URI de imagen nula después de la cámara.",
-                                    Toast.LENGTH_SHORT).show();
+                            Toast.makeText(this, "Error: URI de imagen nula después de la cámara.", Toast.LENGTH_SHORT).show();
                         }
                     } else {
                         Toast.makeText(this, "Toma de foto cancelada", Toast.LENGTH_SHORT).show();
@@ -158,8 +157,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         imageUri = uri; // Asignamos la URI de la galería a la variable de clase
                         subirImagenStorage(imageUri);
                     } else {
-                        Toast.makeText(this, "Selección de galería cancelada",
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, "Selección de galería cancelada", Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -170,13 +168,10 @@ public class EditarPerfilActivity extends AppCompatActivity {
     private void imageCamara() {
         // 1. Crear URI temporal para que la cámara guarde la foto
         ContentValues contentValues = new ContentValues();
-        contentValues.put(MediaStore.Images.Media.TITLE, "Imagen_Perfil_" +
-                System.currentTimeMillis());
+        contentValues.put(MediaStore.Images.Media.TITLE, "Imagen_Perfil_" + System.currentTimeMillis());
         contentValues.put(MediaStore.Images.Media.DESCRIPTION, "Imagen de perfil del usuario");
 
-                imageUri =
-                        getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                contentValues);
+        imageUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
 
         if (imageUri == null) {
             Toast.makeText(this, "Error al crear URI para la imagen", Toast.LENGTH_SHORT).show();
@@ -242,12 +237,12 @@ public class EditarPerfilActivity extends AppCompatActivity {
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                         });
                     }
-                } else if (itemId == 2) { // Galería
+                } else if (itemId == 2) { // Galeria
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        // CORRECCIÓN: API 33+ necesita READ_MEDIA_IMAGES
-                        concederPermisoAlmacenamiento.launch(Manifest.permission.READ_MEDIA_IMAGES);
+                        // API 33+ (no se necesita permiso para GetContent)
+                        imagenGaleria();
                     } else {
-                        // API < 33 necesita WRITE_EXTERNAL_STORAGE
+                        // API < 33 (se necesita permiso de almacenamiento para la galería)
                         concederPermisoAlmacenamiento.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
                     }
                 }
@@ -282,8 +277,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         String codigoTelefono = ccpSelectorCod.getSelectedCountryCode();
 
         if (nombres.isEmpty() || fechaNac.isEmpty() || telefono.isEmpty()) {
-            Toast.makeText(this, "Por favor, completa todos los campos.",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Por favor, completa todos los campos.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -298,18 +292,16 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         String uid = firebaseAuth.getUid();
         if (uid != null) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users"); //Colección consistente: users
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users"); // Colección consistente: users
             ref.child(uid)
                     .updateChildren(hashMap)
                     .addOnSuccessListener(aVoid -> {
                         progressDialog.dismiss();
-                        Toast.makeText(EditarPerfilActivity.this, "Perfil actualizado exitosamente!",
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditarPerfilActivity.this, "Perfil actualizado exitosamente!", Toast.LENGTH_LONG).show();
                     })
                     .addOnFailureListener(e -> {
                         progressDialog.dismiss();
-                        Toast.makeText(EditarPerfilActivity.this, "Error al actualizar: " + e.getMessage(),
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditarPerfilActivity.this, "Error al actualizar: " + e.getMessage(), Toast.LENGTH_LONG).show();
                         Log.e("FIREBASE_UPDATE", "Error al actualizar perfil", e);
                     });
         } else {
@@ -330,7 +322,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
             return;
         }
 
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users"); //Colección consistente: users
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("users"); // Colección consistente: users
         ref.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -378,8 +370,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 progressDialog.dismiss();
-                Toast.makeText(EditarPerfilActivity.this, "Fallo al cargar los datos: " +
-                        error.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(EditarPerfilActivity.this, "Fallo al cargar los datos: " + error.getMessage(), Toast.LENGTH_LONG).show();
                 Log.e("FIREBASE_READ", "Fallo al cargar datos de perfil", error.toException());
             }
         });
@@ -389,8 +380,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
         // 1. Validar que la URI de la imagen y el usuario existan
         if (imageUri == null || user == null) {
-            Toast.makeText(EditarPerfilActivity.this, "Error: URI de imagen o usuario no válidos.",
-                    Toast.LENGTH_LONG).show();
+            Toast.makeText(EditarPerfilActivity.this, "Error: URI de imagen o usuario no válidos.", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -422,11 +412,9 @@ public class EditarPerfilActivity extends AppCompatActivity {
                             @Override
                             public void onFailure(@NonNull Exception exception) {
                                 progressDialog.dismiss();
-                                String errorMessage = "Error al obtener la URL de descarga: " +
-                                        exception.getMessage();
+                                String errorMessage = "Error al obtener la URL de descarga: " + exception.getMessage();
                                 Log.e("Storage", errorMessage);
-                                Toast.makeText(EditarPerfilActivity.this, errorMessage,
-                                        Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EditarPerfilActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                             }
                         });
                     }
@@ -438,8 +426,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         progressDialog.dismiss();
                         String errorMessage = "Fallo en la subida: " + e.getMessage();
                         Log.e("Storage", errorMessage);
-                        Toast.makeText(EditarPerfilActivity.this, errorMessage,
-                                Toast.LENGTH_SHORT).show();
+                        Toast.makeText(EditarPerfilActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                     }
                 });
     }
@@ -448,8 +435,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
         // Aseguramos que haya un usuario autenticado
         if (firebaseAuth.getCurrentUser() == null) {
             progressDialog.dismiss();
-            Toast.makeText(EditarPerfilActivity.this, "Error: No hay usuario autenticado.",
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditarPerfilActivity.this, "Error: No hay usuario autenticado.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -478,8 +464,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             Log.e("GLIDE_UPDATE", "Error al cargar la imagen después de la BD", e);
                         }
-                        Toast.makeText(EditarPerfilActivity.this, "Su imagen de perfil se ha actualizado",
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditarPerfilActivity.this, "Su imagen de perfil se ha actualizado", Toast.LENGTH_LONG).show();
                     }
                 })
                 .addOnFailureListener(new OnFailureListener() {
@@ -488,8 +473,7 @@ public class EditarPerfilActivity extends AppCompatActivity {
                         // Fallo: Ocurrió un error
                         progressDialog.dismiss();
                         String errorMessage = "Error al actualizar la BD: " + e.getMessage();
-                        Toast.makeText(EditarPerfilActivity.this, errorMessage,
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(EditarPerfilActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         Log.e("DB_UPDATE_FAIL", "Error al actualizar Realtime DB", e);
                     }
                 });
