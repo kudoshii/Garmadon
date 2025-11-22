@@ -223,27 +223,30 @@ public class EditarPerfilActivity extends AppCompatActivity {
 
             popupMenu.setOnMenuItemClickListener(item -> {
                 int itemId = item.getItemId();
-
                 if (itemId == 1) { // Cámara
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        // API 33+ (solo se necesita el permiso de cámara)
+                        // API 33+
                         concederPermisoCamara.launch(new String[]{
                                 Manifest.permission.CAMERA
                         });
                     } else {
-                        // API < 33 (se necesita cámara y almacenamiento)
+                        // API < 33
                         concederPermisoCamara.launch(new String[]{
                                 Manifest.permission.CAMERA,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE
                         });
                     }
-                } else if (itemId == 2) { // Galeria
+                } else if (itemId == 2) { // Galería
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                        // API 33+ (no se necesita permiso para GetContent)
-                        imagenGaleria();
+                        // API 33+ - solicita el nuevo permiso
+                        concederPermisoAlmacenamiento.launch(
+                                Manifest.permission.READ_MEDIA_IMAGES
+                        );
                     } else {
-                        // API < 33 (se necesita permiso de almacenamiento para la galería)
-                        concederPermisoAlmacenamiento.launch(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                        // API < 33
+                        concederPermisoAlmacenamiento.launch(
+                                Manifest.permission.READ_EXTERNAL_STORAGE
+                        );
                     }
                 }
                 return true;
