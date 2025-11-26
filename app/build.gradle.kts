@@ -46,8 +46,9 @@ dependencies {
     implementation("com.google.android.material:material:1.11.0")
 
     implementation("com.google.firebase:firebase-auth:22.3.0")
-    implementation("com.google.firebase:firebase-firestore:24.10.3")
+    /*implementation("com.google.firebase:firebase-firestore:24.10.3")*/
     implementation("com.google.firebase:firebase-storage:20.3.0")
+    implementation("com.google.firebase:firebase-firestore:24.11.1") //Añadida
 
     implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
     implementation("com.google.firebase:firebase-analytics")

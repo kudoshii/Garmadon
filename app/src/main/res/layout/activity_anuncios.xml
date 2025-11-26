@@ -55,8 +55,23 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:paddingBottom="56dp"
+        android:paddingBottom="0dp"
         android:clipToPadding="false"
-        tools:listitem="@layout/activity_item_producto"/>
+        tools:listitem="@layout/item_producto"/>
+
+    <!-- Mensaje para cuando no hay anuncios -->
+    <TextView
+        android:id="@+id/tv_no_anuncios"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="¡Aún no has creado ningún anuncio! Comienza a vender tus productos."
+        android:textSize="16sp"
+        android:textColor="@android:color/darker_gray"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

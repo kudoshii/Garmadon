@@ -1,25 +1,44 @@
 package com.example.garmadon;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.appcompat.widget.Toolbar;
-import android.content.Intent;
+
 import android.os.Bundle;
-import android.view.MenuItem;
-import android.widget.ImageButton;
+import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.garmadon.adapter.ProductoAdapter;
 import com.example.garmadon.model.Producto;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class AnunciosActivity extends AppCompatActivity {
 
-    private RecyclerView recyclerView;
-    private BottomNavigationView bottomNav;
+    private static final String TAG = "AnunciosActivity";
+
+    // Vistas y Componentes
+    private RecyclerView rvMisAnuncios;
+    private TextView tvNoAnuncios;
+
+    // Firebase
+    private FirebaseAuth mAuth;
+    private DatabaseReference productosRef;
+
+    private List<Producto> listaProductos;
+    private ProductoAdapter productoAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,83 +46,89 @@ public class AnunciosActivity extends AppCompatActivity {
         setContentView(R.layout.activity_anuncios);
 
         // 1. Inicializar Vistas
-        recyclerView = findViewById(R.id.rv_mis_productos);
+        rvMisAnuncios = findViewById(R.id.rv_mis_productos);
+        tvNoAnuncios = findViewById(R.id.tv_no_anuncios);
 
-        // 2. Configuración del RecyclerView y carga de productos de prueba
-        configurarRecyclerView();
+        // 2. Inicializar Firebase
+        mAuth = FirebaseAuth.getInstance();
+        productosRef = FirebaseDatabase.getInstance().getReference("productos");
 
-        // 3. Configuracion cabecera
-        configurarCabecera();
+        // 3. Configurar RecyclerView
+        listaProductos = new ArrayList<>();
+        productoAdapter = new ProductoAdapter(this, listaProductos);
 
+        // Configuración del LayoutManager para que sepa dibujar los ítems
+        rvMisAnuncios.setLayoutManager(new LinearLayoutManager(this));
+        rvMisAnuncios.setAdapter(productoAdapter);
 
+        // 4. Cargar los anuncios
+        cargarMisAnuncios();
+
+        //  Configurar el botón de retroceso si lo tienes en el layout
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
 
-    private void configurarRecyclerView() {
-        // Usa los mismos productos de prueba que en Home.java
-        List<Producto> productosDePrueba = cargarProductosDePrueba();
+    private void cargarMisAnuncios() {
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ProductoAdapter productoAdapter = new ProductoAdapter(this, productosDePrueba);
-        recyclerView.setAdapter(productoAdapter);
-    }
-
-    /**
-     * Define la lógica de navegación para la barra inferior en esta Activity.
-     */
-    /*private void configurarNavegacionInferior() {
-        // Marcar el ítem 'Anuncios' como seleccionado al cargar la Activity
-        MenuItem anunciosItem = bottomNav.getMenu().findItem(R.id.navigation_ads);
-        if (anunciosItem != null) {
-            anunciosItem.setChecked(true);
+        // 1. Verificar autenticación
+        if (currentUser == null) {
+            Log.w(TAG, "Usuario no autenticado. No se pueden cargar anuncios.");
+            mostrarMensajeNoAnuncios(true);
+            return;
         }
 
-        bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            Intent intent;
+        final String userId = currentUser.getUid();
+        Log.d(TAG, "Iniciando carga de anuncios para el usuario ID: " + userId);
 
-            if (itemId == R.id.navigation_home) { // Ir a Home
-                intent = new Intent(AnunciosActivity.this, Home.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-                startActivity(intent);
-                finish();
-                return true;
-            } else if (itemId == R.id.navigation_account) { // Ir a Cuenta
-                intent = new Intent(AnunciosActivity.this, CuentaActivity.class);
-                startActivity(intent);
-                finish();
-                return true;
-            } else if (itemId == R.id.navigation_ads) {
-                return true;
+        // 2. CREAR LA CONSULTA FILTRADA: Ordena por vendedorId e iguala al ID del usuario
+        Query queryMisAnuncios = productosRef.orderByChild("vendedorId").equalTo(userId);
+
+        queryMisAnuncios.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Usamos una lista temporal para recopilar los productos
+                List<Producto> productosCargados = new ArrayList<>();
+
+                if (snapshot.exists()) {
+                    for (DataSnapshot productoSnapshot : snapshot.getChildren()) {
+                        Producto producto = productoSnapshot.getValue(Producto.class);
+                        if (producto != null) {
+                            // Asigna la clave del producto como su ID
+                            producto.setId(productoSnapshot.getKey());
+                            productosCargados.add(producto);
+                        }
+                    }
+                }
+
+                // 3. Actualizar UI
+                if (productosCargados.isEmpty()) {
+                    mostrarMensajeNoAnuncios(true);
+                } else {
+                    mostrarMensajeNoAnuncios(false);
+                }
+
+                productoAdapter.actualizarProductos(productosCargados);
+
+                Log.d(TAG, "Anuncios cargados: " + productosCargados.size());
             }
 
-            // Para otros ítems no implementados (Chats, Vender)
-            Toast.makeText(AnunciosActivity.this, "Navegando a: " + item.getTitle(), Toast.LENGTH_SHORT).show();
-            return true;
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Fallo al leer anuncios: " + error.getMessage());
+                Toast.makeText(AnunciosActivity.this, "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                mostrarMensajeNoAnuncios(true);
+            }
         });
-    }*/
-
-    /**
-     * Carga los datos de prueba (igual que en Home.java).
-     */
-    private List<Producto> cargarProductosDePrueba() {
-        List<Producto> lista = new ArrayList<>();
-        // ID, Nombre, Descripción, Precio, ImagenUrl (ficticia)
-        lista.add(new Producto("ID001", "Bicicleta Vintage", "Clásica bicicleta de ruta.", "150.000", "url_ficticia_1"));
-        lista.add(new Producto("ID002", "Auriculares Inalámbricos", "Cancelación de ruido activa.", "75.990", "url_ficticia_2"));
-        lista.add(new Producto("ID003", "Libro: El Señor de los Anillos", "Edición de lujo tapa dura.", "29.990", "url_ficticia_3"));
-        lista.add(new Producto("ID004", "Teclado Mecánico RGB", "Switches marrones, 60%.", "55.000", "url_ficticia_4"));
-        lista.add(new Producto("ID005", "Silla de Oficina Ergonómica", "Soporte lumbar ajustable.", "99.990", "url_ficticia_5"));
-        lista.add(new Producto("ID006", "Cámara Instantánea", "Incluye 10 películas.", "45.000", "url_ficticia_6"));
-        lista.add(new Producto("ID007", "Laptop Gaming", "Potente para juegos y trabajo.", "750.000", "url_ficticia_7"));
-        lista.add(new Producto("ID008", "Mesa de Centro", "Diseño moderno de madera.", "80.000", "url_ficticia_8"));
-        lista.add(new Producto("ID009", "Zapatillas Deportivas", "Para correr, talla 42.", "35.000", "url_ficticia_9"));
-
-        return lista;
     }
-    private void configurarCabecera() {
-        // Listener para el botón de retroceso (flecha <- )
-        ImageButton btnBack = findViewById(R.id.btnBack);
-        btnBack.setOnClickListener(v -> finish());
+
+    private void mostrarMensajeNoAnuncios(boolean mostrar) {
+        if (mostrar) {
+            tvNoAnuncios.setVisibility(View.VISIBLE);
+            rvMisAnuncios.setVisibility(View.GONE);
+        } else {
+            tvNoAnuncios.setVisibility(View.GONE);
+            rvMisAnuncios.setVisibility(View.VISIBLE);
+        }
     }
 }
-
