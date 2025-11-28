@@ -1,13 +1,12 @@
-<?xml
-    version="1.0"
-    encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.garmadon.DetalleProductoActivity">
+    android:background="?attr/colorSurface"
+    tools:context=".DetalleProductoActivity">
     <!-- AppBarLayout con Toolbar para el botón de retroceso -->
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -20,33 +19,29 @@
             android:background="?attr/colorPrimary"
             app:title="Detalles del Producto"
             app:navigationIcon="?attr/homeAsUpIndicator"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"/>
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     </com.google.android.material.appbar.AppBarLayout>
-
     <!-- Contenido desplazable del detalle del producto -->
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingBottom="80dp"> <!-- Padding para que el FAB no tape el
-contenido -->
-
+            android:paddingBottom="16dp">
             <!-- Imagen Principal del Producto (ocupará todo el ancho) -->
             <ImageView
                 android:id="@+id/iv_detalle_imagen"
                 android:layout_width="0dp"
                 android:layout_height="300dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bicicleta"
+                android:src="@drawable/agregar_img"
                 android:contentDescription="Imagen detallada del producto"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
-
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:src="@drawable/bicicleta" />
             <!-- Contenedor principal de la información -->
             <androidx.cardview.widget.CardView
                 android:id="@+id/card_info"
@@ -55,126 +50,218 @@ contenido -->
                 android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="-40dp"
+                app:cardBackgroundColor="?attr/colorSurface"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="8dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv_detalle_imagen">
-
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:padding="20dp">
-
                     <!-- Título del Producto -->
                     <TextView
                         android:id="@+id/tv_detalle_titulo"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="Producto en Venta: Ejemplo de Alta Calidad"
+                        tools:text="Producto en Venta: Ejemplo de Alta Calidad"
+                        android:text="Cargando..."
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/colorOnSurface"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-
                     <!-- Precio del Producto -->
                     <TextView
                         android:id="@+id/tv_detalle_precio"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="$ 99.990 CLP"
+                        tools:text="$ 99.990 CLP"
+                        android:text="Precio: -"
                         android:textSize="28sp"
                         android:textStyle="bold"
                         android:textColor="?attr/colorAccent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_titulo"
-                        />
-
-                    <!-- Separador -->
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_titulo" />
+                    <!-- Separador 1 (Revertido a color original) -->
                     <View
-                        android:id="@+id/divider"
+                        android:id="@+id/divider1"
                         android:layout_width="0dp"
                         android:layout_height="1dp"
                         android:layout_marginTop="16dp"
                         android:background="@android:color/darker_gray"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_precio"
-                        />
-
-                    <!-- Etiqueta de Vendedor -->
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_precio" />
+                    <!-- *************** SECCIÓN DE ESPECIFICACIONES *************** -->
                     <TextView
-                        android:id="@+id/tv_etiqueta_vendedor"
+                        android:id="@+id/tv_etiqueta_especificaciones"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Vendedor:"
+                        android:text="Especificaciones"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/colorOnSurface"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/divider" />
-
-                    <!-- Nombre del Vendedor -->
+                        app:layout_constraintTop_toBottomOf="@+id/divider1" />
+                    <!-- Marca del Producto -->
                     <TextView
-                        android:id="@+id/tv_detalle_vendedor"
+                        android:id="@+id/tv_detalle_marca"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:text="Nombre de Usuario"
-                        android:textColor="?attr/colorPrimary"
-
-                        app:layout_constraintBaseline_toBaselineOf="@+id/tv_etiqueta_vendedor"
-
-                        app:layout_constraintStart_toEndOf="@+id/tv_etiqueta_vendedor"
-                        app:layout_constraintEnd_toEndOf="parent" />
-
-                    <!-- Etiqueta de Descripción -->
+                        android:layout_marginTop="8dp"
+                        android:text="Marca: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_etiqueta_especificaciones" />
+                    <!-- Condición del Producto -->
+                    <TextView
+                        android:id="@+id/tv_detalle_condicion"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Condición: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_marca" />
+                    <!-- Categoría del Producto -->
+                    <TextView
+                        android:id="@+id/tv_detalle_categoria"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Categoría: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_condicion" />
+                    <!-- Dirección de Retiro -->
+                    <TextView
+                        android:id="@+id/tv_detalle_direccion"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Retiro en: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_categoria" />
+                    <!-- Separador 2 (Revertido a color original) -->
+                    <View
+                        android:id="@+id/divider2"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@android:color/darker_gray"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_direccion" />
+                    <!-- *************** SECCIÓN DE DESCRIPCIÓN *************** -->
                     <TextView
                         android:id="@+id/tv_etiqueta_descripcion"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Descripción:"
+                        android:text="Descripción del Producto"
+                        android:textSize="18sp"
                         android:textStyle="bold"
-                        android:textColor="@color/black"
+                        android:textColor="?attr/colorOnSurface"
                         app:layout_constraintStart_toStartOf="parent"
-
-                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_vendedor" />
-
-                    <!-- Descripción del Producto -->
+                        app:layout_constraintTop_toBottomOf="@+id/divider2" />
+                    <!-- Descripción del Producto (Sin lorem ipsum, solo tools:text para preview) -->
                     <TextView
                         android:id="@+id/tv_detalle_descripcion"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:text="lorem_ipsum"
-                        android:textColor="@android:color/black"
+                        android:text="Cargando descripción desde Firebase..."
+                        android:textColor="?attr/colorOnSurface"
                         android:textSize="16sp"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-
-                        app:layout_constraintTop_toBottomOf="@+id/tv_etiqueta_descripcion" />
-
+                        app:layout_constraintTop_toBottomOf="@+id/tv_etiqueta_descripcion"
+                        tools:text="Esta es la descripción detallada del producto que se carga
+directamente desde la base de datos de Firebase. Ya no se usa 'lorem ipsum' en el layout, solo
+en la vista previa del diseñador."/>
+                    <!-- Separador 3 (Revertido a color original) -->
+                    <View
+                        android:id="@+id/divider3"
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:background="@android:color/darker_gray"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_descripcion" />
+                    <!-- *************** SECCIÓN DE VENDEDOR (TEXTO PLANO) *************** -->
+                    <TextView
+                    android:id="@+id/tv_etiqueta_contacto"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:text="Información de Contacto"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="?attr/colorOnSurface"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider3" />
+                    <!-- Nombre del Vendedor (ID tv_detalle_vendedor ya existe) -->
+                    <TextView
+                        android:id="@+id/tv_detalle_vendedor"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:text="Nombre: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_etiqueta_contacto" />
+                    <!-- Email del Vendedor (ID tv_vendedor_email ya existe, sin ícono) -->
+                    <TextView
+                        android:id="@+id/tv_vendedor_email"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Correo: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        android:clickable="true"
+                        android:autoLink="email"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_detalle_vendedor" />
+                    <!-- Teléfono del Vendedor (Nuevo TextView) -->
+                    <TextView
+                        android:id="@+id/tv_vendedor_telefono"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Teléfono: Cargando..."
+                        android:textColor="?attr/colorOnSurface"
+                        android:clickable="true"
+                        android:autoLink="phone"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_vendedor_email" />
+                    <!-- Botón de Contactar Vendedor (Sin backgroundTint explícito) -->
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/fab_contactar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="24dp"
+                        android:text="Contactar Vendedor"
+                        android:textSize="16sp"
+                        android:paddingVertical="12dp"
+                        app:icon="@android:drawable/ic_menu_call"
+                        app:iconGravity="textStart"
+                        app:cornerRadius="12dp"
+                        app:layout_constraintTop_toBottomOf="@+id/tv_vendedor_telefono"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
-
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- Botón Flotante para Contactar al Vendedor (fixed position) -->
-    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-        android:id="@+id/fab_contactar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="16dp"
-        android:text="Contactar Vendedor"
-        app:icon="@android:drawable/ic_menu_send"
-        android:textColor="@color/white"
-        app:backgroundTint="?attr/colorPrimaryDark"
-        app:cornerRadius="12dp"/>
-
-    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
