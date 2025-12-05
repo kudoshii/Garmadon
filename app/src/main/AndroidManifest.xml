@@ -29,6 +29,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garmadon">
         <activity
+            android:name=".EditarProductoActivity"
+            android:exported="false" />
+        <activity
             android:name=".GaleriaImagenAdapter"
             android:exported="false" />
         <activity
