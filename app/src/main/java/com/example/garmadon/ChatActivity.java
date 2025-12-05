@@ -1,132 +1,167 @@
 package com.example.garmadon;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
 import android.os.Bundle;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.garmadon.adapter.MensajeAdapter;
 import com.example.garmadon.model.Mensaje;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.*;
+
 import java.util.ArrayList;
 import java.util.List;
+
 public class ChatActivity extends AppCompatActivity {
-    // Identificador del usuario actual (simulado)
-    private static final String CURRENT_USER_ID = "usuario_propio";
-    // Vistas de la interfaz
+
+    private String CURRENT_USER_ID;
+    private String vendedorId;
+    private String chatId;
+    private String vendedorNombre;
+
+    // Firebase
+    private DatabaseReference chatRef;
+
+    // UI
     private RecyclerView recyclerView;
     private EditText etMensaje;
-    private ImageButton btnEnviarMensaje;
-    private ImageButton btnEnviarImagen;
+    private ImageButton btnEnviar;
+    private ImageButton btnAdjuntar;
     private TextView tvNombreContacto;
     private TextView tvEstadoContacto;
-    // Adaptador y lista de mensajes
+
     private MensajeAdapter mensajeAdapter;
     private List<Mensaje> listaMensajes;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //layout chat
         setContentView(R.layout.activity_chat);
-        // 1. Inicialización de Vistas
+
+        // UID ACTUAL
+        CURRENT_USER_ID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        // Datos recibidos desde DetalleProductoActivity
+        vendedorId = getIntent().getStringExtra("vendedor_id");
+        vendedorNombre = getIntent().getStringExtra("vendedor_nombre");
+
+        // Generamos el chatId (ordenado)
+        chatId = generarChatId(CURRENT_USER_ID, vendedorId);
+
+        // Firebase Reference
+        chatRef = FirebaseDatabase.getInstance().getReference("chats").child(chatId);
+
         inicializarVistas();
-        // 2. Configuración de la Cabecera de Contacto
         configurarCabecera();
-        // 3. Configuración del RecyclerView y carga de datos simulados
         configurarRecyclerView();
-        // 4. Configuración del Listener del botón de enviar
         configurarListeners();
+
+        escucharMensajes(); // Mensajes en tiempo real
+        registrarParticipantes();
     }
+
     private void inicializarVistas() {
-        // Cabecera
+        recyclerView = findViewById(R.id.recyclerViewChat);
+        etMensaje = findViewById(R.id.editTextMensaje);
+        btnEnviar = findViewById(R.id.btnEnviar);
+        btnAdjuntar = findViewById(R.id.btnAttachImage);
+
         tvNombreContacto = findViewById(R.id.tvContactName);
         tvEstadoContacto = findViewById(R.id.tvContactStatus);
-        // Lista de mensajes
-        recyclerView = findViewById(R.id.recyclerViewChat);
-        // Área de entrada
-        etMensaje = findViewById(R.id.editTextMensaje);
-        btnEnviarMensaje = findViewById(R.id.btnEnviar);
-        btnEnviarImagen = findViewById(R.id.btnAttachImage);
     }
+
     private void configurarCabecera() {
-        // Datos de contacto simulados
-        tvNombreContacto.setText("Garmadon_id");
-        tvEstadoContacto.setText("online");
-        // Listener para el botón de retroceso (flecha <- )
+        tvNombreContacto.setText(vendedorNombre != null ? vendedorNombre : "Contacto");
+        tvEstadoContacto.setText("conectado");
+
         ImageButton btnBack = findViewById(R.id.btnBack);
         btnBack.setOnClickListener(v -> finish());
     }
+
     private void configurarRecyclerView() {
-        // Carga datos estáticos
-        listaMensajes = cargarMensajesDePrueba();
-        // Inicializamos el adaptador con los mensajes y el ID de usuario propio
+        listaMensajes = new ArrayList<>();
         mensajeAdapter = new MensajeAdapter(this, listaMensajes, CURRENT_USER_ID);
-        // Configuramos el RecyclerView
+
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        // Hacemos que la lista inicie desde abajo
         layoutManager.setStackFromEnd(true);
+
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mensajeAdapter);
     }
+
     private void configurarListeners() {
-        // Listener para el botón de Enviar Mensaje
-        btnEnviarMensaje.setOnClickListener(v -> enviarMensajeSimulado());
-        // Listener para el botón de Enviar Imagen (simulación)
-        btnEnviarImagen.setOnClickListener(v -> {
-            Toast.makeText(this, "Simulando envío de imagen...", Toast.LENGTH_SHORT).show();
+        btnEnviar.setOnClickListener(v -> enviarMensaje());
+
+        btnAdjuntar.setOnClickListener(v -> {
+            Toast.makeText(this, "Función de enviar imágenes pronto disponible.", Toast.LENGTH_SHORT).show();
         });
     }
-    private void enviarMensajeSimulado() {
+
+    private void enviarMensaje() {
         String texto = etMensaje.getText().toString().trim();
-        if (!texto.isEmpty()) {
-            // 1. Crea el nuevo objeto Mensaje (como si fuera el usuario propio)
-            Mensaje nuevoMensaje = new Mensaje(
-                    "ID_SIMULADO_" + (listaMensajes.size() + 1), // ID único simulado
-                    CURRENT_USER_ID, // ID del remitente (el usuario propio)
-                    texto,
-                    System.currentTimeMillis() // Hora actual
-            );
-            // 2. Agrega el mensaje a la lista
-            listaMensajes.add(nuevoMensaje);
-            // 3. Notifica al adaptador del cambio (para que se muestre en la lista)
-            mensajeAdapter.notifyItemInserted(listaMensajes.size() - 1);
-            // 4. Desplaza la lista al último mensaje
-            recyclerView.scrollToPosition(listaMensajes.size() - 1);
-            // 5. Limpia la caja de texto
-            etMensaje.setText("");
-            simularRespuesta();
-        } else {
-            Toast.makeText(this, "Escriba un mensaje.", Toast.LENGTH_SHORT).show();
+
+        if (texto.isEmpty()) {
+            Toast.makeText(this, "Escribe un mensaje", Toast.LENGTH_SHORT).show();
+            return;
         }
-    }
-    // Simula una respuesta automática del contacto después de un pequeño retraso
-    private void simularRespuesta() {
-        // Simula la respuesta de Antonio Vera
-        String respuestaTexto = "¡Hola! Gracias por tu mensaje. El producto sigue disponible.";
-        Mensaje respuesta = new Mensaje(
-                "ID_RESPUESTA_" + (listaMensajes.size() + 1),
-                "Garmadon_id", // ID del remitente (el otro usuario)
-                respuestaTexto,
-                System.currentTimeMillis() + 1000 // Hora ligeramente posterior
+
+        String mensajeId = chatRef.child("mensajes").push().getKey();
+
+        Mensaje mensaje = new Mensaje(
+                mensajeId,
+                CURRENT_USER_ID,
+                texto,
+                System.currentTimeMillis()
         );
-        // Agregamos la respuesta con un pequeño retraso visual
-        recyclerView.postDelayed(() -> {
-            listaMensajes.add(respuesta);
-            mensajeAdapter.notifyItemInserted(listaMensajes.size() - 1);
-            recyclerView.scrollToPosition(listaMensajes.size() - 1);
-        }, 1000); // Retraso de 1 segundo
+
+        // Enviar a Firebase
+        chatRef.child("mensajes").child(mensajeId).setValue(mensaje)
+                .addOnSuccessListener(a -> etMensaje.setText(""))
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Error al enviar mensaje", Toast.LENGTH_SHORT).show()
+                );
+
+        // Actualizar último mensaje
+        chatRef.child("ultimoMensaje").setValue(texto);
+        chatRef.child("timestamp").setValue(System.currentTimeMillis());
     }
-    //Carga mensajes estáticos para ver cómo se ve la interfaz al iniciar.
-    private List<Mensaje> cargarMensajesDePrueba() {
-        List<Mensaje> mensajes = new ArrayList<>();
-        // Mensaje del OTRO usuario (izquierda)
-        mensajes.add(new Mensaje("m1", "Garmadon_id", "¡Hola! ¿Aún tienes la bicicleta a la venta?", System.currentTimeMillis() - 600000));
-                // Mensaje del USUARIO PROPIO (derecha)
-                mensajes.add(new Mensaje("m2", CURRENT_USER_ID, "Sí, claro. Está en excelente estado.", System.currentTimeMillis() - 300000));
-                        // Mensaje del OTRO usuario (izquierda)
-                        mensajes.add(new Mensaje("m3", "Garmadon_id", "¿Podrías enviarme más fotos de los detalles? ¿Y dónde podría recogerla?", System.currentTimeMillis() - 120000));
-        return mensajes;
+
+    private void escucharMensajes() {
+        chatRef.child("mensajes")
+                .orderByChild("timestamp")
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        listaMensajes.clear();
+
+                        for (DataSnapshot ds : snapshot.getChildren()) {
+                            Mensaje msj = ds.getValue(Mensaje.class);
+                            listaMensajes.add(msj);
+                        }
+
+                        mensajeAdapter.notifyDataSetChanged();
+                        recyclerView.scrollToPosition(listaMensajes.size() - 1);
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {}
+                });
+    }
+
+    private void registrarParticipantes() {
+        chatRef.child("participantes").child(CURRENT_USER_ID).setValue(true);
+        chatRef.child("participantes").child(vendedorId).setValue(true);
+    }
+
+    private String generarChatId(String id1, String id2) {
+        // Ordenar alfabéticamente para evitar duplicados
+        return (id1.compareTo(id2) < 0) ? id1 + "_" + id2 : id2 + "_" + id1;
     }
 }

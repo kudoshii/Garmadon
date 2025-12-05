@@ -32,9 +32,6 @@
             android:name=".EditarProductoActivity"
             android:exported="false" />
         <activity
-            android:name=".GaleriaImagenAdapter"
-            android:exported="false" />
-        <activity
             android:name=".CambiarPasswordActivity"
             android:exported="false" />
         <activity
