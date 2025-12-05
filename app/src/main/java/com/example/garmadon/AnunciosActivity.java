@@ -25,80 +25,89 @@ import java.util.List;
 
 public class AnunciosActivity extends AppCompatActivity {
     private static final String TAG = "AnunciosActivity";
-    // Vistas y Componentes
+
     private RecyclerView rvMisAnuncios;
     private TextView tvNoAnuncios;
-    // Firebase
     private FirebaseAuth mAuth;
     private DatabaseReference productosRef;
     private List<Producto> listaProductos;
     private ProductoAdapter productoAdapter;
+    private ValueEventListener valueEventListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_anuncios);
-        // 1. Inicializar Vistas
+
         rvMisAnuncios = findViewById(R.id.rv_mis_productos);
         tvNoAnuncios = findViewById(R.id.tv_no_anuncios);
-        // 2. Inicializar Firebase
+
         mAuth = FirebaseAuth.getInstance();
         productosRef = FirebaseDatabase.getInstance().getReference("productos");
-        // 3. Configurar RecyclerView
+
         listaProductos = new ArrayList<>();
-        productoAdapter = new ProductoAdapter(this, listaProductos);
-        // Configuración del LayoutManager para que sepa dibujar los ítems
+        // IMPORTANTE: Pasar 'true' para mostrar botones de edición
+        productoAdapter = new ProductoAdapter(this, listaProductos, true);
+
         rvMisAnuncios.setLayoutManager(new LinearLayoutManager(this));
         rvMisAnuncios.setAdapter(productoAdapter);
-        // 4. Cargar los anuncios
+
         cargarMisAnuncios();
-        // Configurar el botón de retroceso si lo tienes en el layout
+
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
     }
+
     private void cargarMisAnuncios() {
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        // 1. Verificar autenticación
+
         if (currentUser == null) {
-            Log.w(TAG, "Usuario no autenticado. No se pueden cargar anuncios.");
+            Log.w(TAG, "Usuario no autenticado");
             mostrarMensajeNoAnuncios(true);
             return;
         }
+
         final String userId = currentUser.getUid();
-        Log.d(TAG, "Iniciando carga de anuncios para el usuario ID: " + userId);
-        // 2. CREAR LA CONSULTA FILTRADA: Ordena por vendedorId e iguala al ID del usuario
+        Log.d(TAG, "Cargando anuncios para usuario: " + userId);
+
         Query queryMisAnuncios = productosRef.orderByChild("vendedorId").equalTo(userId);
-        queryMisAnuncios.addValueEventListener(new ValueEventListener() {
+
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                // Usamos una lista temporal para recopilar los productos
                 List<Producto> productosCargados = new ArrayList<>();
+
                 if (snapshot.exists()) {
                     for (DataSnapshot productoSnapshot : snapshot.getChildren()) {
                         Producto producto = productoSnapshot.getValue(Producto.class);
                         if (producto != null) {
-                            // Asigna la clave del producto como su ID
                             producto.setId(productoSnapshot.getKey());
                             productosCargados.add(producto);
                         }
                     }
                 }
-                // 3. Actualizar UI
+
                 if (productosCargados.isEmpty()) {
                     mostrarMensajeNoAnuncios(true);
                 } else {
                     mostrarMensajeNoAnuncios(false);
                 }
+
                 productoAdapter.actualizarProductos(productosCargados);
                 Log.d(TAG, "Anuncios cargados: " + productosCargados.size());
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Fallo al leer anuncios: " + error.getMessage());
-                Toast.makeText(AnunciosActivity.this, "Error: " + error.getMessage(),
-                        Toast.LENGTH_LONG).show();
+                Log.e(TAG, "Error al leer anuncios: " + error.getMessage());
+                Toast.makeText(AnunciosActivity.this,
+                        "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
                 mostrarMensajeNoAnuncios(true);
             }
-        });
+        };
+
+        queryMisAnuncios.addValueEventListener(valueEventListener);
     }
+
     private void mostrarMensajeNoAnuncios(boolean mostrar) {
         if (mostrar) {
             tvNoAnuncios.setVisibility(View.VISIBLE);
@@ -106,6 +115,14 @@ public class AnunciosActivity extends AppCompatActivity {
         } else {
             tvNoAnuncios.setVisibility(View.GONE);
             rvMisAnuncios.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (productosRef != null && valueEventListener != null) {
+            productosRef.removeEventListener(valueEventListener);
         }
     }
 }
