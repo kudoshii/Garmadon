@@ -1,21 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <!-- ========== PERMISOS OBLIGATORIOS ========== -->
-    <!-- Permiso de cámara -->
+    <!-- Permisos -->
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
 
-    <uses-permission android:name="android.permission.CAMERA" /> <!-- Permisos de almacenamiento para versiones antiguas -->
+    <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" /> <!-- IMPORTANTE: Permisos para Android 13+ (API 33+) -->
+        android:maxSdkVersion="28" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
-    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" /> <!-- Permiso de Internet -->
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -29,6 +28,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Garmadon">
         <activity
+            android:name=".EditarProductoActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ListaChatsActivity"
+            android:exported="false" /> <!-- Actividades existentes -->
+        <activity
             android:name=".GaleriaImagenAdapter"
             android:exported="false" />
         <activity
@@ -36,10 +42,12 @@
             android:exported="false" />
         <activity
             android:name=".EditarPerfilActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ChatActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".AnunciosActivity"
             android:exported="false" />
@@ -48,7 +56,8 @@
             android:exported="false" />
         <activity
             android:name=".RegistroActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".HomeActivity"
             android:exported="false" />
@@ -57,7 +66,8 @@
             android:exported="false" />
         <activity
             android:name=".PublicarActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ItemProductoActivity"
             android:exported="false" />

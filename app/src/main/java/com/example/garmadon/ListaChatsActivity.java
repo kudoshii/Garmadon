@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class ChatActivity extends AppCompatActivity {
+public class ListaChatsActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
 
     // Vistas
@@ -155,7 +155,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Error al verificar chat: " + error.getMessage());
-                Toast.makeText(ChatActivity.this, "Error al cargar chat", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListaChatsActivity.this, "Error al cargar chat", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -243,7 +243,7 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Error al cargar mensajes: " + error.getMessage());
-                Toast.makeText(ChatActivity.this, "Error al cargar mensajes", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ListaChatsActivity.this, "Error al cargar mensajes", Toast.LENGTH_SHORT).show();
             }
         };
 
@@ -285,7 +285,7 @@ public class ChatActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> {
                     Log.e(TAG, "Error al enviar mensaje: " + e.getMessage());
-                    Toast.makeText(ChatActivity.this, "Error al enviar mensaje", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ListaChatsActivity.this, "Error al enviar mensaje", Toast.LENGTH_SHORT).show();
                 });
     }
 

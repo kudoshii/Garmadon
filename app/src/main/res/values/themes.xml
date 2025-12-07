@@ -1,26 +1,97 @@
-<resources xmlns:tools="http://schemas.android.com/tools"> <!-- Base application theme. --> <style name="Base.Theme.MarketPlaces" parent="Theme.Material3.DayNight.NoActionBar"> </style>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
-    <style name="Theme.Garmadon" parent="Base.Theme.MarketPlaces" />
-    <!-- Estilo para las etiquetas (Nombres, Email, etc.) -->
-    <style name="PerfilLabel"> <item name="android:layout_width">0dp</item>
+    <!-- Tema base de la aplicación -->
+    <style name="Base.Theme.Garmadon" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Colores primarios -->
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary_dark</item>
+        <item name="colorAccent">@color/accent</item>
+
+        <!-- Colores secundarios -->
+        <item name="colorSecondary">@color/secondary</item>
+        <item name="colorSecondaryVariant">@color/secondary_dark</item>
+
+        <!-- Colores de superficie -->
+        <item name="colorSurface">@color/surface</item>
+        <item name="colorOnSurface">@color/text_primary</item>
+        <item name="android:colorBackground">@color/background</item>
+
+        <!-- Colores de texto -->
+        <item name="android:textColorPrimary">@color/text_primary</item>
+        <item name="android:textColorSecondary">@color/text_secondary</item>
+        <item name="android:textColorHint">@color/text_hint</item>
+
+        <!-- Bordes redondeados para componentes -->
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.App.SmallComponent</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.App.MediumComponent</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.App.LargeComponent</item>
+    </style>
+
+    <style name="Theme.Garmadon" parent="Base.Theme.Garmadon" />
+
+    <!-- Formas redondeadas -->
+    <style name="ShapeAppearance.App.SmallComponent" parent="ShapeAppearance.Material3.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.MediumComponent" parent="ShapeAppearance.Material3.MediumComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">12dp</item>
+    </style>
+
+    <style name="ShapeAppearance.App.LargeComponent" parent="ShapeAppearance.Material3.LargeComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">16dp</item>
+    </style>
+
+    <!-- Estilos para etiquetas de perfil -->
+    <style name="PerfilLabel">
+        <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">0.3</item>
         <item name="android:textSize">16sp</item>
         <item name="android:textStyle">bold</item>
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
+        <item name="android:textColor">@color/text_primary</item>
     </style>
-    <!-- Estilo para los valores (Prueba Prueba, Prueba@gmail.com, etc.) -->
+
     <style name="PerfilValor">
         <item name="android:layout_width">0dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_columnWeight">0.7</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:textColor">@color/text_secondary</item>
         <item name="android:gravity">end</item>
-<!-- CORRECCIÓN: Usamos paddingTop y paddingBottom en lugar de paddingVertical para compatibilidad con API < 26 -->
         <item name="android:paddingTop">4dp</item>
         <item name="android:paddingBottom">4dp</item>
     </style>
 
-    </resources>
+    <!-- Estilo para botones -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button">
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:paddingTop">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="elevation">4dp</item>
+    </style>
+
+    <!-- Estilo para cards -->
+    <style name="Widget.App.CardView" parent="Widget.MaterialComponents.CardView">
+        <item name="cardCornerRadius">16dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="contentPadding">16dp</item>
+    </style>
+
+    <!-- Estilo para TextInputLayout -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxCornerRadiusTopStart">12dp</item>
+        <item name="boxCornerRadiusTopEnd">12dp</item>
+        <item name="boxCornerRadiusBottomStart">12dp</item>
+        <item name="boxCornerRadiusBottomEnd">12dp</item>
+        <item name="boxStrokeColor">@color/primary</item>
+    </style>
+
+</resources>

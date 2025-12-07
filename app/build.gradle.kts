@@ -45,10 +45,12 @@ dependencies {
     implementation("androidx.cardview:cardview:1.0.0")
     implementation("com.google.android.material:material:1.11.0")
 
+    // ViewPager2 para el carousel de imágenes
+    implementation("androidx.viewpager2:viewpager2:1.0.0")
+
     implementation("com.google.firebase:firebase-auth:22.3.0")
-    /*implementation("com.google.firebase:firebase-firestore:24.10.3")*/
     implementation("com.google.firebase:firebase-storage:20.3.0")
-    implementation("com.google.firebase:firebase-firestore:24.11.1") //Añadida
+    implementation("com.google.firebase:firebase-firestore:24.11.1")
 
     implementation(platform("com.google.firebase:firebase-bom:34.5.0"))
     implementation("com.google.firebase:firebase-analytics")
@@ -59,6 +61,9 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 
     implementation("com.hbb20:ccp:2.7.0")
+
+    // Indicador de círculos para ViewPager2
+    implementation("com.tbuonomo:dotsindicator:5.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
