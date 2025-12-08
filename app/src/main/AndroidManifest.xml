@@ -33,9 +33,6 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ListaChatsActivity"
-            android:exported="false" /> <!-- Actividades existentes -->
-        <activity
-            android:name=".GaleriaImagenAdapter"
             android:exported="false" />
         <activity
             android:name=".CambiarPasswordActivity"

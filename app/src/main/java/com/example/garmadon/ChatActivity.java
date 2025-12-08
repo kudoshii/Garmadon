@@ -30,7 +30,6 @@ import java.util.Map;
 public class ChatActivity extends AppCompatActivity {
     private static final String TAG = "ChatActivity";
 
-    // Vistas
     private RecyclerView recyclerView;
     private EditText etMensaje;
     private ImageButton btnEnviarMensaje;
@@ -39,14 +38,13 @@ public class ChatActivity extends AppCompatActivity {
     private TextView tvEstadoContacto;
     private ImageButton btnBack;
 
-    // Firebase
     private FirebaseAuth mAuth;
     private DatabaseReference chatsRef;
     private DatabaseReference mensajesRef;
     private DatabaseReference usersRef;
+    private DatabaseReference productosRef;
     private ChildEventListener mensajesListener;
 
-    // Datos
     private String chatId;
     private String vendedorId;
     private String vendedorNombre;
@@ -63,7 +61,6 @@ public class ChatActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
-        // Inicializar Firebase
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -76,20 +73,21 @@ public class ChatActivity extends AppCompatActivity {
         currentUserId = currentUser.getUid();
         chatsRef = FirebaseDatabase.getInstance().getReference("chats");
         usersRef = FirebaseDatabase.getInstance().getReference("users");
+        productosRef = FirebaseDatabase.getInstance().getReference("productos");
 
-        // Obtener datos del intent
         vendedorId = getIntent().getStringExtra("vendedor_id");
         vendedorNombre = getIntent().getStringExtra("vendedor_nombre");
         productoId = getIntent().getStringExtra("producto_id");
         productoNombre = getIntent().getStringExtra("producto_nombre");
 
-        if (vendedorId == null || productoId == null) {
+        // FIX 1: Validación de datos del intent
+        if (TextUtils.isEmpty(vendedorId) || TextUtils.isEmpty(productoId)) {
             Toast.makeText(this, "Error: Datos de chat incompletos", Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        // Si el usuario actual es el vendedor, mostrar error
+        // FIX 2: Validar que el vendedor no sea el usuario actual
         if (currentUserId.equals(vendedorId)) {
             Toast.makeText(this, "No puedes chatear con tu propio producto", Toast.LENGTH_LONG).show();
             finish();
@@ -97,9 +95,56 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         inicializarVistas();
-        cargarNombreUsuarioActual();
-        configurarRecyclerView();
-        configurarListeners();
+
+        // FIX 3: Verificar que el producto existe antes de continuar
+        verificarProductoYContinuar();
+    }
+
+    private void verificarProductoYContinuar() {
+        productosRef.child(productoId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (!snapshot.exists()) {
+                    Toast.makeText(ChatActivity.this,
+                            "Error: El producto no existe o fue eliminado",
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
+
+                // Verificar que el vendedorId del producto coincide
+                String vendedorDelProducto = snapshot.child("vendedorId").getValue(String.class);
+                if (vendedorDelProducto == null || !vendedorDelProducto.equals(vendedorId)) {
+                    Toast.makeText(ChatActivity.this,
+                            "Error: Información del vendedor inconsistente",
+                            Toast.LENGTH_LONG).show();
+                    finish();
+                    return;
+                }
+
+                // Si el nombre del producto no se pasó, obtenerlo
+                if (TextUtils.isEmpty(productoNombre)) {
+                    productoNombre = snapshot.child("nombre").getValue(String.class);
+                    if (productoNombre == null) {
+                        productoNombre = "Producto";
+                    }
+                }
+
+                // Todo validado, continuar
+                cargarNombreUsuarioActual();
+                configurarRecyclerView();
+                configurarListeners();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                Log.e(TAG, "Error al verificar producto: " + error.getMessage());
+                Toast.makeText(ChatActivity.this,
+                        "Error al cargar información del producto",
+                        Toast.LENGTH_SHORT).show();
+                finish();
+            }
+        });
     }
 
     private void inicializarVistas() {
@@ -111,9 +156,9 @@ public class ChatActivity extends AppCompatActivity {
         btnEnviarImagen = findViewById(R.id.btnAttachImage);
         btnBack = findViewById(R.id.btnBack);
 
-        // Configurar cabecera
+        // Configurar cabecera con valores seguros
         tvNombreContacto.setText(vendedorNombre != null ? vendedorNombre : "Usuario");
-        tvEstadoContacto.setText("Producto: " + (productoNombre != null ? productoNombre : ""));
+        tvEstadoContacto.setText("Producto: " + (productoNombre != null ? productoNombre : "Cargando..."));
     }
 
     private void cargarNombreUsuarioActual() {
@@ -121,10 +166,9 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 currentUserNombre = snapshot.child("nombre").getValue(String.class);
-                if (currentUserNombre == null) {
+                if (currentUserNombre == null || currentUserNombre.trim().isEmpty()) {
                     currentUserNombre = "Usuario";
                 }
-                // Ahora que tenemos el nombre, inicializamos el chat
                 inicializarChat();
             }
 
@@ -138,16 +182,24 @@ public class ChatActivity extends AppCompatActivity {
     }
 
     private void inicializarChat() {
-        // Generar ID único para el chat
         chatId = Chat.generarChatId(currentUserId, vendedorId, productoId);
         mensajesRef = chatsRef.child(chatId).child("mensajes");
 
-        // Verificar si el chat existe, si no, crearlo
         chatsRef.child(chatId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (!snapshot.exists()) {
                     crearNuevoChat();
+                } else {
+                    // FIX 4: Validar que el usuario es participante del chat existente
+                    DataSnapshot participantes = snapshot.child("participantes");
+                    if (participantes.exists() && !participantes.hasChild(currentUserId)) {
+                        Toast.makeText(ChatActivity.this,
+                                "Error: No tienes permiso para acceder a este chat",
+                                Toast.LENGTH_LONG).show();
+                        finish();
+                        return;
+                    }
                 }
                 cargarMensajes();
             }
@@ -156,11 +208,20 @@ public class ChatActivity extends AppCompatActivity {
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e(TAG, "Error al verificar chat: " + error.getMessage());
                 Toast.makeText(ChatActivity.this, "Error al cargar chat", Toast.LENGTH_SHORT).show();
+                finish();
             }
         });
     }
 
     private void crearNuevoChat() {
+        // FIX 5: Validar que tenemos todos los datos necesarios
+        if (TextUtils.isEmpty(currentUserNombre) || TextUtils.isEmpty(vendedorNombre)) {
+            Toast.makeText(this, "Error: Datos incompletos para crear el chat",
+                    Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         Chat nuevoChat = new Chat(
                 productoId,
                 productoNombre,
@@ -172,7 +233,13 @@ public class ChatActivity extends AppCompatActivity {
 
         chatsRef.child(chatId).setValue(nuevoChat)
                 .addOnSuccessListener(aVoid -> Log.d(TAG, "Chat creado exitosamente"))
-                .addOnFailureListener(e -> Log.e(TAG, "Error al crear chat: " + e.getMessage()));
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Error al crear chat: " + e.getMessage());
+                    Toast.makeText(ChatActivity.this,
+                            "Error al crear el chat. Intente nuevamente.",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                });
     }
 
     private void configurarRecyclerView() {
@@ -203,18 +270,22 @@ public class ChatActivity extends AppCompatActivity {
                 Mensaje mensaje = snapshot.getValue(Mensaje.class);
                 if (mensaje != null) {
                     mensaje.setId(snapshot.getKey());
-                    listaMensajes.add(mensaje);
-                    mensajeAdapter.notifyItemInserted(listaMensajes.size() - 1);
-                    recyclerView.scrollToPosition(listaMensajes.size() - 1);
+
+                    // FIX 6: Validar que el mensaje tiene datos válidos
+                    if (!TextUtils.isEmpty(mensaje.getContenido()) &&
+                            !TextUtils.isEmpty(mensaje.getRemitenteId())) {
+                        listaMensajes.add(mensaje);
+                        mensajeAdapter.notifyItemInserted(listaMensajes.size() - 1);
+                        recyclerView.scrollToPosition(listaMensajes.size() - 1);
+                    }
                 }
             }
 
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, String previousChildName) {
                 Mensaje mensaje = snapshot.getValue(Mensaje.class);
-                if (mensaje != null) {
+                if (mensaje != null && !TextUtils.isEmpty(snapshot.getKey())) {
                     mensaje.setId(snapshot.getKey());
-                    // Buscar y actualizar el mensaje
                     for (int i = 0; i < listaMensajes.size(); i++) {
                         if (listaMensajes.get(i).getId().equals(mensaje.getId())) {
                             listaMensajes.set(i, mensaje);
@@ -228,11 +299,13 @@ public class ChatActivity extends AppCompatActivity {
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                 String mensajeId = snapshot.getKey();
-                for (int i = 0; i < listaMensajes.size(); i++) {
-                    if (listaMensajes.get(i).getId().equals(mensajeId)) {
-                        listaMensajes.remove(i);
-                        mensajeAdapter.notifyItemRemoved(i);
-                        break;
+                if (mensajeId != null) {
+                    for (int i = 0; i < listaMensajes.size(); i++) {
+                        if (listaMensajes.get(i).getId().equals(mensajeId)) {
+                            listaMensajes.remove(i);
+                            mensajeAdapter.notifyItemRemoved(i);
+                            break;
+                        }
                     }
                 }
             }
@@ -253,12 +326,29 @@ public class ChatActivity extends AppCompatActivity {
     private void enviarMensaje() {
         String texto = etMensaje.getText().toString().trim();
 
+        // FIX 7: Validaciones más robustas
         if (TextUtils.isEmpty(texto)) {
             Toast.makeText(this, "Escriba un mensaje", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Crear el mensaje
+        if (texto.length() > 1000) {
+            Toast.makeText(this, "El mensaje es demasiado largo (máximo 1000 caracteres)",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // FIX 8: Sanitizar el input para evitar problemas
+        String sanitizedText = texto.replaceAll("\\s+", " ").trim();
+
+        if (sanitizedText.isEmpty()) {
+            Toast.makeText(this, "El mensaje no debe contener solo espacios", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        final String mensajeContenido = sanitizedText;
+
+
         String mensajeId = mensajesRef.push().getKey();
         if (mensajeId == null) {
             Toast.makeText(this, "Error al generar ID de mensaje", Toast.LENGTH_SHORT).show();
@@ -266,33 +356,40 @@ public class ChatActivity extends AppCompatActivity {
         }
 
         long timestamp = System.currentTimeMillis();
-        Mensaje nuevoMensaje = new Mensaje(mensajeId, currentUserId, texto, timestamp);
+        // Usamos mensajeContenido en el constructor
+        Mensaje nuevoMensaje = new Mensaje(mensajeId, currentUserId, mensajeContenido, timestamp);
 
-        // Guardar el mensaje
+        // Deshabilitar botón de enviar mientras se envía
+        btnEnviarMensaje.setEnabled(false);
+
         mensajesRef.child(mensajeId).setValue(nuevoMensaje)
                 .addOnSuccessListener(aVoid -> {
-                    // Actualizar el último mensaje del chat
+                    // Aquí, mensajeContenido es accesible sin error
                     Map<String, Object> updates = new HashMap<>();
-                    updates.put("ultimoMensaje", texto);
+                    updates.put("ultimoMensaje", mensajeContenido); // Usar la variable final
                     updates.put("ultimoMensajeTimestamp", timestamp);
 
-                    chatsRef.child(chatId).updateChildren(updates);
-
-                    // Limpiar el campo de texto
-                    etMensaje.setText("");
-
-                    Log.d(TAG, "Mensaje enviado correctamente");
+                    chatsRef.child(chatId).updateChildren(updates)
+                            .addOnCompleteListener(task -> {
+                                btnEnviarMensaje.setEnabled(true);
+                                if (task.isSuccessful()) {
+                                    etMensaje.setText("");
+                                    Log.d(TAG, "Mensaje enviado correctamente");
+                                }
+                            });
                 })
                 .addOnFailureListener(e -> {
+                    btnEnviarMensaje.setEnabled(true);
                     Log.e(TAG, "Error al enviar mensaje: " + e.getMessage());
-                    Toast.makeText(ChatActivity.this, "Error al enviar mensaje", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ChatActivity.this,
+                            "Error al enviar mensaje. Verifique su conexión.",
+                            Toast.LENGTH_SHORT).show();
                 });
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Remover el listener para evitar memory leaks
         if (mensajesRef != null && mensajesListener != null) {
             mensajesRef.removeEventListener(mensajesListener);
         }

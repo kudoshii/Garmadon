@@ -42,6 +42,9 @@ public class HomeActivity extends AppCompatActivity {
     private DatabaseReference databaseRef;
     private List<Producto> listaProductosActual;
 
+    // FIX: Guardar referencia del listener para removerlo
+    private ValueEventListener productosListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,7 +80,6 @@ public class HomeActivity extends AppCompatActivity {
             Intent intent;
 
             if (itemId == R.id.navigation_chats) {
-                // ACTUALIZADO: Abre ListaChatsActivity en lugar de ChatActivity
                 intent = new Intent(HomeActivity.this, ListaChatsActivity.class);
                 startActivity(intent);
                 return true;
@@ -127,7 +129,8 @@ public class HomeActivity extends AppCompatActivity {
     private void cargarProductosDesdeFirebase() {
         Log.d(TAG, "Iniciando ValueEventListener para Realtime Database...");
 
-        databaseRef.addValueEventListener(new ValueEventListener() {
+        // FIX: Guardar la referencia del listener
+        productosListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 listaProductosActual.clear();
@@ -160,7 +163,9 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(HomeActivity.this,
                         "Error al cargar productos: " + error.getMessage(), Toast.LENGTH_LONG).show();
             }
-        });
+        };
+
+        databaseRef.addValueEventListener(productosListener);
     }
 
     @Override
@@ -184,5 +189,15 @@ public class HomeActivity extends AppCompatActivity {
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         startActivity(intent);
         finish();
+    }
+
+    // FIX: Remover el listener cuando se destruye la actividad
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (databaseRef != null && productosListener != null) {
+            databaseRef.removeEventListener(productosListener);
+            Log.d(TAG, "ValueEventListener removido correctamente");
+        }
     }
 }
