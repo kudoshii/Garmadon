@@ -39,10 +39,13 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
     public void onBindViewHolder(@NonNull ChatViewHolder holder, int position) {
         Chat chat = listaChats.get(position);
 
-        // Determinar si el usuario actual es el comprador o vendedor
-        boolean esComprador = currentUserId.equals(chat.getCompradorId());
-        String nombreContacto = esComprador ? chat.getVendedorNombre() : chat.getCompradorNombre();
-        String contactoId = esComprador ? chat.getVendedorId() : chat.getCompradorId();
+        // CORRECCIÓN PRINCIPAL: Determinar quién es el "otro usuario" (contacto)
+        boolean esVendedor = currentUserId.equals(chat.getVendedorId());
+
+        // Si soy el vendedor, el contacto es el comprador
+        // Si soy el comprador, el contacto es el vendedor
+        String nombreContacto = esVendedor ? chat.getCompradorNombre() : chat.getVendedorNombre();
+        String contactoId = esVendedor ? chat.getCompradorId() : chat.getVendedorId();
 
         holder.tvNombreContacto.setText(nombreContacto);
         holder.tvProducto.setText(chat.getProductoNombre());
@@ -51,10 +54,14 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ChatViewHolder
 
         holder.itemView.setOnClickListener(v -> {
             Intent intent = new Intent(context, ChatActivity.class);
+
+            // CRÍTICO: Siempre pasar los datos del VENDEDOR (no del contacto)
+            // porque ChatActivity espera vendedor_id y producto_id para generar el chatId
             intent.putExtra("vendedor_id", chat.getVendedorId());
             intent.putExtra("vendedor_nombre", chat.getVendedorNombre());
             intent.putExtra("producto_id", chat.getProductoId());
             intent.putExtra("producto_nombre", chat.getProductoNombre());
+
             context.startActivity(intent);
         });
     }
