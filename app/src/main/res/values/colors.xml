@@ -1,47 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Colores principales -->
-    <color name="primary">#2196F3</color>
-    <color name="primary_dark">#1976D2</color>
-    <color name="primary_light">#BBDEFB</color>
-    <color name="accent">#FF5722</color>
-    <color name="accent_light">#FFCCBC</color>
-
-    <!-- Colores secundarios -->
-    <color name="secondary">#4CAF50</color>
-    <color name="secondary_dark">#388E3C</color>
+    <!-- Colores principales de la app -->
+    <color name="primary">#7F39FB</color>
+    <color name="primary_dark">#6320E0</color>
+    <color name="primary_light">#9D5FFC</color>
+    <color name="accent">#FF6B35</color>
 
     <!-- Colores de fondo -->
-    <color name="background">#F5F5F5</color>
-    <color name="background_dark">#E0E0E0</color>
+    <color name="white">#FFFFFF</color>
     <color name="surface">#FFFFFF</color>
-    <color name="surface_elevated">#FAFAFA</color>
 
     <!-- Colores de texto -->
-    <color name="black">#212121</color>
-    <color name="white">#FFFFFF</color>
-    <color name="text_primary">#212121</color>
+    <color name="black">#000000</color>
     <color name="text_secondary">#757575</color>
-    <color name="text_hint">#9E9E9E</color>
 
-    <!-- Estados -->
+    <!-- Colores de estado -->
     <color name="success">#4CAF50</color>
     <color name="error">#F44336</color>
     <color name="warning">#FF9800</color>
-    <color name="info">#2196F3</color>
-
-    <!-- Bordes y divisores -->
-    <color name="divider">#BDBDBD</color>
-    <color name="border">#E0E0E0</color>
-
-    <!-- Overlays y sombras -->
-    <color name="overlay_dark">#80000000</color>
-    <color name="overlay_light">#40FFFFFF</color>
-    <color name="shadow">#1A000000</color>
-
-    <!-- Colores para chat -->
-    <color name="chat_sent">#2196F3</color>
-    <color name="chat_received">#E0E0E0</color>
-    <color name="chat_text_sent">#FFFFFF</color>
-    <color name="chat_text_received">#212121</color>
 </resources>

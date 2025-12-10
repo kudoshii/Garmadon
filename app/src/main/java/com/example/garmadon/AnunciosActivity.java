@@ -46,7 +46,6 @@ public class AnunciosActivity extends AppCompatActivity {
         productosRef = FirebaseDatabase.getInstance().getReference("productos");
 
         listaProductos = new ArrayList<>();
-        // IMPORTANTE: Pasar 'true' para mostrar botones de edición
         productoAdapter = new ProductoAdapter(this, listaProductos, true);
 
         rvMisAnuncios.setLayoutManager(new LinearLayoutManager(this));
@@ -74,6 +73,10 @@ public class AnunciosActivity extends AppCompatActivity {
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (isFinishing() || isDestroyed()) {
+                    return;
+                }
+
                 List<Producto> productosCargados = new ArrayList<>();
 
                 if (snapshot.exists()) {
@@ -98,10 +101,12 @@ public class AnunciosActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                Log.e(TAG, "Error al leer anuncios: " + error.getMessage());
-                Toast.makeText(AnunciosActivity.this,
-                        "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
-                mostrarMensajeNoAnuncios(true);
+                if (!isFinishing() && !isDestroyed()) {
+                    Log.e(TAG, "Error al leer anuncios: " + error.getMessage());
+                    Toast.makeText(AnunciosActivity.this,
+                            "Error: " + error.getMessage(), Toast.LENGTH_LONG).show();
+                    mostrarMensajeNoAnuncios(true);
+                }
             }
         };
 
@@ -122,7 +127,13 @@ public class AnunciosActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (productosRef != null && valueEventListener != null) {
-            productosRef.removeEventListener(valueEventListener);
+            try {
+                productosRef.removeEventListener(valueEventListener);
+                valueEventListener = null;
+                Log.d(TAG, "ValueEventListener de anuncios removido correctamente");
+            } catch (Exception e) {
+                Log.e(TAG, "Error al remover listener: " + e.getMessage(), e);
+            }
         }
     }
 }
