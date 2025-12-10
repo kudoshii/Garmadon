@@ -71,14 +71,19 @@ public class CuentaActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        // Solo cargar datos si no estamos cerrando sesión Y el usuario existe
         if (currentUser != null && !isLoggingOut) {
             cargarDatosPerfil();
+        } else if (currentUser == null) {
+            // Si no hay usuario, ir directamente al login
+            irALogin();
         }
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+        // Siempre limpiar listeners al salir de la actividad
         limpiarListeners();
     }
 
@@ -86,6 +91,13 @@ public class CuentaActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         limpiarListeners();
+    }
+
+    private void irALogin() {
+        Intent intent = new Intent(CuentaActivity.this, LoginActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 
     private void inicializarVistasInformacion() {
@@ -105,44 +117,72 @@ public class CuentaActivity extends AppCompatActivity {
             return;
         }
 
+        // Limpiar listener anterior si existe
+        limpiarListeners();
+
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // Verificar PRIMERO que la actividad sigue válida
                 if (isLoggingOut || isFinishing() || isDestroyed()) {
                     return;
                 }
 
-                String nombres = snapshot.child("nombre").getValue(String.class);
-                String urlImagenPerfil = snapshot.child("urlImagenPerfil").getValue(String.class);
-                String email = currentUser != null ? currentUser.getEmail() : null;
-                String tiempoStr = snapshot.child("tiempo").getValue(String.class);
-                String telefono = snapshot.child("telefono").getValue(String.class);
-                String codTelefono = snapshot.child("codigoTelefono").getValue(String.class);
+                // Verificar que aún tenemos un usuario autenticado
+                if (mAuth.getCurrentUser() == null) {
+                    return;
+                }
 
-                nombres = nombres != null ? nombres : "No disponible";
-                email = email != null ? email : "No disponible";
-                telefono = telefono != null ? telefono : "No disponible";
-                codTelefono = codTelefono != null ? codTelefono : "";
-                String estado = "Verificado";
+                // NUEVO: Verificar que el snapshot existe
+                if (!snapshot.exists()) {
+                    Log.w("CuentaActivity", "No existe información del usuario en Firebase");
+                    tvValorNombres.setText("Usuario sin datos");
+                    tvValorEstado.setText("Incompleto");
+                    return;
+                }
 
+                // Obtener datos con manejo robusto de diferentes estructuras
+                String nombres = obtenerValorSeguro(snapshot, "nombre");
+                String urlImagenPerfil = obtenerValorSeguro(snapshot, "urlImagenPerfil");
+                String email = currentUser != null ? currentUser.getEmail() : "No disponible";
+
+                // Manejar diferentes formatos de timestamp
+                String tiempoStr = obtenerTimestamp(snapshot);
+
+                // Manejar teléfono como String o Number
+                String telefono = obtenerTelefonoSeguro(snapshot, "telefono");
+                String codTelefono = obtenerValorSeguro(snapshot, "codigoTelefono");
+
+                // Manejar fecha de nacimiento (puede ser fecha_nac o fechaNacimiento)
+                String fechaNac = obtenerValorSeguro(snapshot, "fecha_nac");
+                if (fechaNac.equals("No disponible")) {
+                    fechaNac = obtenerValorSeguro(snapshot, "fechaNacimiento");
+                }
+
+                // Construir teléfono completo
                 String cod_tel_completo = "";
-                if (!codTelefono.isEmpty()) {
+                if (!codTelefono.isEmpty() && !codTelefono.equals("No disponible")) {
                     cod_tel_completo += "+" + codTelefono + " ";
                 }
-                cod_tel_completo += telefono;
+                if (!telefono.equals("No disponible")) {
+                    cod_tel_completo += telefono;
+                }
                 if (cod_tel_completo.trim().isEmpty()) {
                     cod_tel_completo = "No disponible";
                 }
 
+                // Actualizar UI
                 tvValorNombres.setText(nombres);
                 tvValorEmail.setText(email);
                 tvValorMiembro.setText(obtenerFecha(tiempoStr));
                 tvValorTelefono.setText(cod_tel_completo);
-                tvValorEstado.setText(estado);
+                tvValorEstado.setText("Verificado");
 
-                if (urlImagenPerfil != null && !urlImagenPerfil.isEmpty()) {
+                // Cargar imagen de perfil
+                if (urlImagenPerfil != null && !urlImagenPerfil.isEmpty()
+                        && !urlImagenPerfil.equals("No disponible")) {
                     try {
                         if (!isFinishing() && !isDestroyed()) {
                             Glide.with(CuentaActivity.this)
@@ -251,7 +291,8 @@ public class CuentaActivity extends AppCompatActivity {
         try {
             long timestamp = Long.parseLong(timestampString);
 
-            if (timestamp < 1000000000000L) {
+            // Si el timestamp es muy pequeño, asumimos que está en segundos
+            if (timestamp < 10000000000L) {
                 timestamp *= 1000;
             }
 
@@ -260,7 +301,93 @@ public class CuentaActivity extends AppCompatActivity {
 
         } catch (NumberFormatException e) {
             Log.e("FECHA_FORMAT", "Error al parsear timestamp: " + timestampString, e);
+
+            // Intentar parsear como fecha directa (por si viene en formato "19/11/2025")
+            if (timestampString.contains("/")) {
+                return timestampString;
+            }
+
             return "N/A";
+        } catch (Exception e) {
+            Log.e("FECHA_FORMAT", "Error inesperado: " + e.getMessage(), e);
+            return "N/A";
+        }
+    }
+
+    /**
+     * Obtiene un valor String de Firebase de forma segura
+     */
+    private String obtenerValorSeguro(DataSnapshot snapshot, String campo) {
+        try {
+            Object valor = snapshot.child(campo).getValue();
+            if (valor == null) {
+                return "No disponible";
+            }
+            return String.valueOf(valor).trim();
+        } catch (Exception e) {
+            Log.w("CuentaActivity", "Error al obtener campo " + campo + ": " + e.getMessage());
+            return "No disponible";
+        }
+    }
+
+    /**
+     * Obtiene el teléfono manejando tanto String como Number
+     */
+    private String obtenerTelefonoSeguro(DataSnapshot snapshot, String campo) {
+        try {
+            Object valor = snapshot.child(campo).getValue();
+            if (valor == null) {
+                return "No disponible";
+            }
+
+            // Si es un número, convertir a String sin notación científica
+            if (valor instanceof Long || valor instanceof Integer) {
+                return String.valueOf(valor);
+            }
+
+            String telefonoStr = String.valueOf(valor).trim();
+
+            // Limpiar cualquier carácter no numérico excepto '+'
+            telefonoStr = telefonoStr.replaceAll("[^0-9+]", "");
+
+            if (telefonoStr.isEmpty()) {
+                return "No disponible";
+            }
+
+            return telefonoStr;
+        } catch (Exception e) {
+            Log.w("CuentaActivity", "Error al obtener teléfono: " + e.getMessage());
+            return "No disponible";
+        }
+    }
+
+    /**
+     * Obtiene el timestamp manejando diferentes formatos
+     */
+    private String obtenerTimestamp(DataSnapshot snapshot) {
+        try {
+            // Intentar con 'tiempo' primero
+            Object tiempo = snapshot.child("tiempo").getValue();
+            if (tiempo != null) {
+                return String.valueOf(tiempo);
+            }
+
+            // Intentar con 'fecha_creacion'
+            Object fechaCreacion = snapshot.child("fecha_creacion").getValue();
+            if (fechaCreacion != null) {
+                return String.valueOf(fechaCreacion);
+            }
+
+            // Intentar con otros nombres posibles
+            Object timestamp = snapshot.child("timestamp").getValue();
+            if (timestamp != null) {
+                return String.valueOf(timestamp);
+            }
+
+            return null;
+        } catch (Exception e) {
+            Log.w("CuentaActivity", "Error al obtener timestamp: " + e.getMessage());
+            return null;
         }
     }
 }

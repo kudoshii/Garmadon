@@ -196,8 +196,13 @@ public class HomeActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         if (databaseRef != null && productosListener != null) {
-            databaseRef.removeEventListener(productosListener);
-            Log.d(TAG, "ValueEventListener removido correctamente");
+            try {
+                databaseRef.removeEventListener(productosListener);
+                productosListener = null;
+                Log.d(TAG, "ValueEventListener removido correctamente");
+            } catch (Exception e) {
+                Log.e(TAG, "Error al remover listener: " + e.getMessage(), e);
+            }
         }
     }
 }
